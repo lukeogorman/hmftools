@@ -107,7 +107,7 @@ class VdjAnnotator(private val adaptor: VJReadLayoutBuilder,
                 return null
 
             anchorBlosumMatch = blosumSearcher.searchForAnchor(
-                vdj.sequence, vdj.jAnchor.geneType.pairedVjGeneType(),
+                vdj.sequence, vdj.jAnchor.geneType.pairedVjGeneTypes(),
                 IAnchorBlosumSearcher.Mode.ALLOW_NEG_SIMILARITY,
                 0,
                 vdj.jAnchor.anchorBoundary)
@@ -118,7 +118,7 @@ class VdjAnnotator(private val adaptor: VJReadLayoutBuilder,
                 return null
 
             anchorBlosumMatch = blosumSearcher.searchForAnchor(
-                vdj.sequence, vdj.vAnchor.geneType.pairedVjGeneType(),
+                vdj.sequence, vdj.vAnchor.geneType.pairedVjGeneTypes(),
                 IAnchorBlosumSearcher.Mode.ALLOW_NEG_SIMILARITY,
                 vdj.vAnchor.anchorBoundary,
                 vdj.length)
@@ -276,12 +276,16 @@ class VdjAnnotator(private val adaptor: VJReadLayoutBuilder,
             {
                 filters.add("MAX_LENGTH")
             }
-
             val maxNonSplitReads = Math.min(MAX_NONSPLIT_READS, Math.max(vdj.numReads / 2, 1))
             if ((vAlignedReads == 0 || jAlignedReads == 0) &&
                 (jNonSplitReads + vNonSplitReads) >= maxNonSplitReads)
             {
                 filters.add("MATCHES_REF")
+            }
+            if (vdj.vAnchor != null && vdj.jAnchor != null &&
+                vdj.vAnchorBoundary!! > vdj.jAnchorBoundary!!)
+            {
+                filters.add("CDR3_DELETED")
             }
             if (filters.isEmpty())
             {
