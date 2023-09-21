@@ -40,6 +40,7 @@
         <module>teal</module>
         <module>virus-interpreter</module>
         <module>wisp</module>
+        <module>error-profile</module>
     </modules>
 
     <properties>
