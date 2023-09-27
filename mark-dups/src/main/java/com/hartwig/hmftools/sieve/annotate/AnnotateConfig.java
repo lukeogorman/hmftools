@@ -14,11 +14,11 @@ import org.apache.logging.log4j.Logger;
 public class AnnotateConfig
 {
     private static final String BAM_FILE = "bam_file";
-    private static final String BED_FILE = "bed_file";
+    private static final String HIGH_DEPTH_FILE = "high_depth_file";
     private static final String OUTPUT_FILE = "output_file";
 
     public final String BamFile;
-    public final String BedFile;
+    public final String HighDepthFile;
     public final String RefGenome;
     public final String OutputFile;
     public final RefGenomeVersion RefGenVersion;
@@ -27,7 +27,7 @@ public class AnnotateConfig
     public AnnotateConfig(final ConfigBuilder configBuilder)
     {
         BamFile = configBuilder.getValue(BAM_FILE);
-        BedFile = configBuilder.getValue(BED_FILE);
+        HighDepthFile = configBuilder.getValue(HIGH_DEPTH_FILE);
         OutputFile = configBuilder.getValue(OUTPUT_FILE);
         RefGenome = configBuilder.getValue(REF_GENOME);
         RefGenVersion = RefGenomeVersion.from(configBuilder);
@@ -37,7 +37,7 @@ public class AnnotateConfig
     public static void addConfig(final ConfigBuilder configBuilder)
     {
         configBuilder.addPath(BAM_FILE, true, "BAM file");
-        configBuilder.addPath(BED_FILE, true, "BED file");
+        configBuilder.addPath(HIGH_DEPTH_FILE, true, "high depth file");
         configBuilder.addConfigItem(OUTPUT_FILE, true, "Output file");
         addRefGenomeConfig(configBuilder, true);
         addThreadOptions(configBuilder);

@@ -25,8 +25,8 @@ public class Annotate
         mConfig = new AnnotateConfig(configBuilder);
     }
 
-    public static synchronized void writeRecord(final BufferedWriter outputWriter, final BlacklistRegion region,
-            final AnnotateStatistics stats)
+    public static synchronized void writeRecord(final BufferedWriter outputWriter, final HighDepthRegion region,
+            final HighDepthCounts stats)
     {
         try
         {
@@ -64,15 +64,15 @@ public class Annotate
             System.exit(1);
         }
 
-        if(mConfig.BedFile == null)
+        if(mConfig.HighDepthFile == null)
         {
-            MD_LOGGER.error("no BED file specified");
+            MD_LOGGER.error("no high depth file specified");
             System.exit(1);
         }
 
         BufferedWriter outputWriter = createOutputWriter();
-        final List<BlacklistRegion> regions =
-                BedReader.readFromFile(mConfig.BedFile);
+        final List<HighDepthRegion> regions =
+                HighDepthReader.readFromFile(mConfig.HighDepthFile);
 
         // TODO(m_cooper): Overlapping
         // TODO(m_cooper): 9
@@ -82,12 +82,12 @@ public class Annotate
 
         // TODO(m_cooper): Read entirely contained?
 
-        final ArrayBlockingQueue<BlacklistRegion> jobs = new ArrayBlockingQueue<>(regions.size(), true, regions);
-        final List<AnnotateConsumer> annotateConsumers = new ArrayList<>();
+        final ArrayBlockingQueue<HighDepthRegion> jobs = new ArrayBlockingQueue<>(regions.size(), true, regions);
+        final List<HighDepthCountConsumer> annotateConsumers = new ArrayList<>();
         for(int i = 0; i < Math.max(mConfig.Threads, 1); i++)
         {
-            final AnnotateConsumer annotateConsumer = new AnnotateConsumer(mConfig, jobs, outputWriter);
-            annotateConsumers.add(annotateConsumer);
+            final HighDepthCountConsumer consumer = new HighDepthCountConsumer(mConfig, jobs, outputWriter);
+            annotateConsumers.add(consumer);
         }
 
         final List<Callable> callableList = annotateConsumers.stream().collect(Collectors.toList());
@@ -112,7 +112,7 @@ public class Annotate
         try
         {
             BufferedWriter writer = new BufferedWriter(new FileWriter(mConfig.OutputFile));
-            writer.write(BlacklistRegion.TSV_HEADER + '\t' + AnnotateStatistics.TSV_HEADER);
+            writer.write(HighDepthRegion.TSV_HEADER + '\t' + HighDepthCounts.TSV_HEADER);
             writer.newLine();
             return writer;
         }
