@@ -14,7 +14,7 @@ import htsjdk.samtools.SAMRecord;
 public class Util
 {
     // TODO(m_cooper): Use the original implementation.
-    public static boolean isNotProperReadPair(final SAMRecord read)
+    public static boolean isDiscordantPair(final SAMRecord read)
     {
         if(read.getReadUnmappedFlag())
         {
@@ -61,6 +61,21 @@ public class Util
         }
 
         return false;
+    }
+
+    public static int getSoftClipCount(final SAMRecord read)
+    {
+        int count = 0;
+        for(CigarElement el : read.getCigar().getCigarElements())
+        {
+            final CigarOperator op = el.getOperator();
+            if(op == CigarOperator.SOFT_CLIP)
+            {
+                count += el.getLength();
+            }
+        }
+
+        return count;
     }
 
     @Nullable
